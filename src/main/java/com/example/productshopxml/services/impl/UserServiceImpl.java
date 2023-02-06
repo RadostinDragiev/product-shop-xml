@@ -1,6 +1,7 @@
 package com.example.productshopxml.services.impl;
 
-import com.example.productshopxml.models.dtos.UserRegisterDto;
+import com.example.productshopxml.models.dtos.*;
+import com.example.productshopxml.models.entities.Product;
 import com.example.productshopxml.models.entities.User;
 import com.example.productshopxml.models.repositories.UserRepository;
 import com.example.productshopxml.services.UserService;
@@ -8,6 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -39,6 +42,27 @@ public class UserServiceImpl implements UserService {
         }
 
         return new User();
+    }
+
+    @Override
+    public UsersSoldExportDto getUsersSoldProducts() {
+        List<User> allByProductsSoldNotNull = this.userRepository.findAllByProductsSoldNotNull();
+        List<UserSoldExportDto> userSoldExportDtos = new ArrayList<>();
+        allByProductsSoldNotNull.forEach(user -> {
+            List<ProductSoldExportDto> productSoldExportDtos = new ArrayList<>();
+            for (Product product : user.getProductsSold()) {
+                String firstName = product.getBuyer().getFirstName();
+                String lastName = product.getBuyer().getLastName();
+
+                ProductSoldExportDto productSoldExportDto = new ProductSoldExportDto(product.getName(), product.getPrice(), firstName, lastName);
+                productSoldExportDtos.add(productSoldExportDto);
+            }
+
+            UserSoldExportDto userSoldExportDto = this.modelMapper.map(user, UserSoldExportDto.class);
+            userSoldExportDto.setProductSoldExportDto(new ProductsSoldExportDto(productSoldExportDtos));
+            userSoldExportDtos.add(userSoldExportDto);
+        });
+        return new UsersSoldExportDto(userSoldExportDtos);
     }
 
 }

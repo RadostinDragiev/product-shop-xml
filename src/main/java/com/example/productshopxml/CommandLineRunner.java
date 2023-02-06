@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import javax.xml.bind.JAXBException;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Component
 public class CommandLineRunner implements org.springframework.boot.CommandLineRunner {
@@ -34,6 +33,19 @@ public class CommandLineRunner implements org.springframework.boot.CommandLineRu
         //seedCategories();
         //seedProducts();
 
+        //productsInRange();
+
+        usersSoldProducts();
+
+    }
+
+    // Query 2 – Successfully Sold Products
+    private void usersSoldProducts() throws JAXBException {
+        this.xmlParser.marshalFile(this.userService.getUsersSoldProducts(), "src/main/resources/files/output/users-sold-products.xml");
+    }
+
+    // Query 1 – Products in Range
+    private void productsInRange() throws JAXBException {
         ProductsExportDto productsExportDto = new ProductsExportDto(this.productService.findProductsInRange(new BigDecimal("500"), new BigDecimal("1000")));
         this.xmlParser.marshalFile(productsExportDto, "src/main/resources/files/output/products-in-range.xml");
     }

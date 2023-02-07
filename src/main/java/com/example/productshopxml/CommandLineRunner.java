@@ -39,6 +39,12 @@ public class CommandLineRunner implements org.springframework.boot.CommandLineRu
 
         //categoriesByProduct();
 
+        usersAndProducts();
+    }
+
+    // Query 4 – Users and Products
+    private void usersAndProducts() throws JAXBException {
+        this.xmlParser.marshalFile(this.userService.getUsersAndProducts(), "src/main/resources/files/output/users-and-products.xml");
     }
 
     // Query 3 – Categories by Products Count

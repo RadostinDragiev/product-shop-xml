@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -63,6 +65,20 @@ public class UserServiceImpl implements UserService {
             userSoldExportDtos.add(userSoldExportDto);
         });
         return new UsersSoldExportDto(userSoldExportDtos);
+    }
+
+    @Override
+    public UsersAndProductsExportDto getUsersAndProducts() {
+        List<User> usersByProductsSoldIsNotNullOrderByProductsSoldDescLastNameAsc = this.userRepository.findAllByProductsSoldNotNullOrderByProductsSoldDescLastNameAsc();
+        List<UserAndProductsExportDto> userAndProductsExportDtos = new ArrayList<>();
+        usersByProductsSoldIsNotNullOrderByProductsSoldDescLastNameAsc.forEach(user -> {
+            UserAndProductsExportDto userAndProductsExportDto = this.modelMapper.map(user, UserAndProductsExportDto.class);
+            ProductAndPriceExportDto[] productAndPriceExportDtos = this.modelMapper.map(user.getProductsSold(), ProductAndPriceExportDto[].class);
+            userAndProductsExportDto.setProductsAndPriceExportDto(new ProductsAndPriceExportDto(productAndPriceExportDtos.length, Arrays.stream(productAndPriceExportDtos).collect(Collectors.toList())));
+            userAndProductsExportDtos.add(userAndProductsExportDto);
+        });
+
+        return new UsersAndProductsExportDto(usersByProductsSoldIsNotNullOrderByProductsSoldDescLastNameAsc.size(), userAndProductsExportDtos);
     }
 
 }

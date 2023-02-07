@@ -35,8 +35,15 @@ public class CommandLineRunner implements org.springframework.boot.CommandLineRu
 
         //productsInRange();
 
-        usersSoldProducts();
+        //usersSoldProducts();
 
+        //categoriesByProduct();
+
+    }
+
+    // Query 3 – Categories by Products Count
+    private void categoriesByProduct() throws JAXBException {
+        this.xmlParser.marshalFile(this.categoryService.getCategoryWithCount(), "src/main/resources/files/output/categories-by-products.xml");
     }
 
     // Query 2 – Successfully Sold Products
